@@ -8,6 +8,8 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
+
+import custom_layers
 import utils
 
 parser = argparse.ArgumentParser()
@@ -30,20 +32,19 @@ def get_model(model_type: str):
             [
                 keras.layers.InputLayer(input_shape=(28, 28)),
                 keras.layers.Flatten(),
-                keras.layers.Dense(10, activation="linear"),
-                keras.layers.Dense(10, activation="linear"),
-                keras.layers.Dense(10, activation="linear"),
+                keras.layers.Dense(10),
+                keras.layers.Dense(10),
+                keras.layers.Dense(10),
             ]
         )
     else:
-        # TODO: use custom dense layer
         return keras.Sequential(
             [
                 keras.layers.InputLayer(input_shape=(28, 28)),
                 keras.layers.Flatten(),
-                keras.layers.Dense(10, activation="linear"),
-                keras.layers.Dense(10, activation="linear"),
-                keras.layers.Dense(10, activation="linear"),
+                custom_layers.Dense(10),
+                custom_layers.Dense(10),
+                custom_layers.Dense(10),
             ]
         )
 
@@ -57,6 +58,8 @@ base_model.compile(
     metrics=["accuracy"],
 )
 base_model.fit(train_images, train_labels, epochs=1, validation_split=0.1, verbose=1)
+
+base_model.summary()
 
 # Train the custom dense layer model
 tf.random.set_seed(SEED)
