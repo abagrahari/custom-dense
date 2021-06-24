@@ -22,5 +22,7 @@ Creating a custom dense layer
 - https://www.tensorflow.org/tutorials/customization/custom_layers
 - https://www.tensorflow.org/api_docs/python/tf/keras/layers/Layer
 
-## Math
-Dense layer implements `y = W*x+b`
+To make a custom Keras layer, each custom Layer class must define:
+- `__init__()` - assigns layer-wide attributes (e.g. number of output units). If you know the input shape, you can also initialize the weights in the constructor as well.
+- `call()` - defines the forward pass. As long as these operations are differentiable and the weights are set to be trainable, TensorFlow will handle backpropagation for you.
+- `build()` - is not required, but implementing it is a best practice. Defining this method allows you to instantiate weights lazily, which is important if you don’t know the size of the input when you initialize the custom layer.
