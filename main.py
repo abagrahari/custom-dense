@@ -59,8 +59,6 @@ base_model.compile(
 )
 base_model.fit(train_images, train_labels, epochs=1, validation_split=0.1, verbose=1)
 
-base_model.summary()
-
 # Train the custom dense layer model
 tf.random.set_seed(SEED)
 custom_model = get_model("custom_dense")
