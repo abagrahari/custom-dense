@@ -147,21 +147,34 @@ class DenseFakeQuant(keras.layers.Layer):
             # vector of size (units,)
         )
 
+    def quant_and_dequant(self, x: tf.Tensor, bits=8) -> tf.Tensor:
+        unused_val = 0
+        return tf.quantization.quantize_and_dequantize_v2(
+            x, unused_val, unused_val, num_bits=bits, range_given=False
+        )
+
     def call(self, inputs):
         # Perform layer's computation, in the forward pass.
         # Back prop is automatically handled by tf
         # Can only use tensorflow functions here
 
         assert inputs.shape.rank in (2, None)
-        # TODO FakeQuant inputs.
-        # TODO FakeQuant kernel
-        # TODO FakeQuant bias
-        y = tf.matmul(inputs, self.kernel)
-        # TODO FakeQuant y
-        # TODO FakeQuant bias to 32 bits
-        y = tf.nn.bias_add(y, self.bias)
-        # TODO FakeQuant y
+
+        # FakeQuant inputs.
+        fq_inputs = self.quant_and_dequant(inputs)
+        # FakeQuant kernel and bias
+        fq_kernel = self.quant_and_dequant(self.kernel)
+        fq_bias = self.quant_and_dequant(self.bias, 32)
+
+        # Use regular matmul
+        y = tf.matmul(fq_inputs, fq_kernel)
+        y = self.quant_and_dequant(y)
+
+        # Use regular addition
+        y = tf.nn.bias_add(y, fq_bias)
+        y = self.quant_and_dequant(y)
+
         if self.activation is not None:
             y = self.activation(y)
-        # TODO FakeQuant y
+        y = self.quant_and_dequant(y)
         return y

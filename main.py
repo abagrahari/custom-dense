@@ -57,7 +57,9 @@ base_model.compile(
     loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
     metrics=["accuracy"],
 )
+print(base_model.layers[2].get_weights()[0])
 base_model.fit(train_images, train_labels, epochs=1, validation_split=0.1, verbose=1)
+print(base_model.layers[2].get_weights()[0])
 
 # Train the custom dense layer model
 tf.random.set_seed(SEED)
@@ -67,7 +69,11 @@ custom_model.compile(
     loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
     metrics=["accuracy"],
 )
+print(custom_model.layers[2].get_weights()[0])
 custom_model.fit(train_images, train_labels, epochs=1, validation_split=0.1, verbose=1)
+print(
+    custom_model.layers[2].get_weights()[0]
+)  # Looks like weights aren't updating during training
 
 _, base_model_accuracy = base_model.evaluate(test_images, test_labels, verbose=0)
 _, custom_model_accuracy = custom_model.evaluate(test_images, test_labels, verbose=0)
