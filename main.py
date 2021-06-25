@@ -42,9 +42,9 @@ def get_model(model_type: str):
             [
                 keras.layers.InputLayer(input_shape=(28, 28)),
                 keras.layers.Flatten(),
-                custom_layers.Dense(10),
-                custom_layers.Dense(10),
-                custom_layers.Dense(10),
+                custom_layers.DenseFakeQuant(10),
+                custom_layers.DenseFakeQuant(10),
+                custom_layers.DenseFakeQuant(10),
             ]
         )
 
